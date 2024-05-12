@@ -91,4 +91,4 @@ async def stop(ctx):
         await ctx.voice_client.disconnect()
     else:
         await ctx.send("I'm not in a voice channel.")
-bot.run("MTIzOTEyNzM5NzcxMDgyMzQ1NQ.GVRVX1.WDnBeNqcBEw51z_NtCvaNz2YfuuNP5F9EYSPVQ")
+bot.run("")
