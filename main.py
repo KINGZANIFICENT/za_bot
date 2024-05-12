@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import youtube_dl
 import asyncio
+import random
 from discord import Intents
 
 bot = commands.Bot(command_prefix='!', intents=Intents.all())
@@ -91,4 +92,25 @@ async def stop(ctx):
         await ctx.voice_client.disconnect()
     else:
         await ctx.send("I'm not in a voice channel.")
+
+@bot.command()
+async def giveaway(ctx, duration: int, prize: str, winners: int):
+    await ctx.send(f"🎉 **Giveaway started!** 🎉\n\nPrize: {prize}\nDuration: {duration} hour(s)\nWinners: {winners}")
+    
+    # Sleep for the duration of the giveaway
+    await asyncio.sleep(duration * 3600)
+    
+    # Get all members of the server
+    members = ctx.guild.members
+    
+    # Filter out bots
+    eligible_members = [member for member in members if not member.bot]
+    
+    # Randomly select winners
+    giveaway_winners = random.sample(eligible_members, min(len(eligible_members), winners))
+    
+    # Announce winners
+    winner_mentions = " ".join([winner.mention for winner in giveaway_winners])
+    await ctx.send(f"🎉 **Giveaway ended!** 🎉\n\nPrize: {prize}\nWinners: {winner_mentions}\n\nCongratulations to the winners!")
+
 bot.run("")

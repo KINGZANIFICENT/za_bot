@@ -16,3 +16,4 @@ za_bot can play any audio address that ends in mp3 (working on a YT url) for exa
 
 1.0.2
 za_bot will moderate users spamming chats after 7 back to back messages the user is assigned a timeout role and will be put on timeout for 10 minutes the bot will send messages when the user is timed out and when the punishment is removed
+za_bot can host giveaways if you do the !giveaway command you can choose an ammount of winners what they win and how long its lasts heres an example !giveaway 1 1Car 3 that means in 1 hour youll be giving away 1 Car to 3 diffrent people when the hour is up it will tag the winners to they may claim there prize!
