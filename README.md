@@ -15,4 +15,4 @@ za_bot will tell you how many people are in your discord when you type the !memb
 za_bot can play any audio address that ends in mp3 (working on a YT url) for example the commmand will look like this !play https://samplelib.com/lib/preview/mp3/sample-3s.mp3 the bot would then join your channel and play your song!
 
 1.0.2
-za_bot will moderate users spamming chats after 7 back to back messages the user is assigned a timeout role and be put on timeout for 10 minute the bot will send messages when the user is timed out and when the punishment is removed
+za_bot will moderate users spamming chats after 7 back to back messages the user is assigned a timeout role and will be put on timeout for 10 minutes the bot will send messages when the user is timed out and when the punishment is removed
