@@ -3,6 +3,7 @@ from discord.ext import commands
 import youtube_dl
 import asyncio
 import random
+import datetime 
 from discord import Intents
 
 bot = commands.Bot(command_prefix='!', intents=Intents.all())
@@ -23,9 +24,9 @@ async def on_member_join(member):
     else:
         print("Role not found!")
     
-    memberCount = guild.member_count
+    member_count = guild.member_count
     channel_to_update = bot.get_channel(1238350633015447555)
-    await channel_to_update.edit(name=f"Members: {memberCount}")
+    await channel_to_update.edit(name=f"Members: {member_count}")
 
 spam_counter = {}
 
@@ -41,11 +42,12 @@ async def on_message(message):
     spam_counter[user_id] += 1
 
     if spam_counter[user_id] >= 7:
-        await message.channel.send(f"{message.author.mention} has been timed out for Sucking Dick.")
-        await message.author.add_roles(message.guild.get_role(1239147083672457216))  # Add timeout role here
-        await message.channel.set_permissions(message.author, send_messages=False, reason="User spamming")
-        await asyncio.sleep(600)  # 10 minutes timeout
-        await message.channel.set_permissions(message.author, send_messages=True, reason="Timeout ended")
+        await message.channel.send(f"{message.author.mention} Shut The Fuck Up.")
+        try:
+            until = datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
+            await message.author.edit(timed_out_until=until, reason="User spamming")  # 10 minutes timeout
+        except Exception as e:
+            print(f"Failed to timeout {message.author}: {e}")
         spam_counter[user_id] = 0
 
     await bot.process_commands(message)
@@ -113,4 +115,10 @@ async def giveaway(ctx, duration: int, prize: str, winners: int):
     winner_mentions = " ".join([winner.mention for winner in giveaway_winners])
     await ctx.send(f"🎉 **Giveaway ended!** 🎉\n\nPrize: {prize}\nWinners: {winner_mentions}\n\nCongratulations to the winners!")
 
-bot.run("")
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("token", help='specify bot token to use')
+cmdline = parser.parse_args()
+
+bot.run(cmdline.token)
