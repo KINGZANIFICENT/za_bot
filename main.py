@@ -3,32 +3,37 @@ from discord.ext import commands
 import youtube_dl
 import asyncio
 import random
-import datetime 
+import datetime
 from discord import Intents
+import argparse
 
-bot = commands.Bot(command_prefix='!', intents=Intents.all())
+bot = commands.Bot(command_prefix="!", intents=Intents.all())
+
 
 @bot.event
 async def on_ready():
     print("Yurrrrrrrrrr!")
 
+
 @bot.event
 async def on_member_join(member):
     channel = bot.get_channel(1238350633015447560)
     await channel.send(f"Welcome to the City Of Fallen Angels!, {member.mention}!")
-    
+
     guild = member.guild
     role = discord.utils.get(guild.roles, id=1238350632142897236)
     if role:
         await member.add_roles(role)
     else:
         print("Role not found!")
-    
+
     member_count = guild.member_count
     channel_to_update = bot.get_channel(1238350633015447555)
     await channel_to_update.edit(name=f"Members: {member_count}")
 
+
 spam_counter = {}
+
 
 @bot.event
 async def on_message(message):
@@ -44,19 +49,24 @@ async def on_message(message):
     if spam_counter[user_id] >= 7:
         await message.channel.send(f"{message.author.mention} Shut The Fuck Up.")
         try:
-            until = datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
-            await message.author.edit(timed_out_until=until, reason="User spamming")  # 10 minutes timeout
+            until = datetime.datetime.now(tz=datetime.UTC) + datetime.timedelta(
+                minutes=10
+            )
+            print(f"Timing Out User {message.author.mention}")
+            await message.author.timeout(until, reason="User spamming")
         except Exception as e:
             print(f"Failed to timeout {message.author}: {e}")
         spam_counter[user_id] = 0
 
     await bot.process_commands(message)
 
+
 @bot.command()
 async def members(ctx):
     guild = ctx.guild
     member_count = guild.member_count
     await ctx.send(f"There are {member_count} members in this server.")
+
 
 @bot.command()
 async def play(ctx, url):
@@ -71,20 +81,23 @@ async def play(ctx, url):
 
     # Download audio from YouTube video
     ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-        'extractaudio': True,  # Explicitly specify extractaudio flag
-        'verbose': True,  # Enable verbose output
-        'extractor': 'youtube',  # Use the YoutubeIE extractor
+        "format": "bestaudio/best",
+        "postprocessors": [
+            {
+                "key": "FFmpegExtractAudio",
+                "preferredcodec": "mp3",
+                "preferredquality": "192",
+            }
+        ],
+        "extractaudio": True,  # Explicitly specify extractaudio flag
+        "verbose": True,  # Enable verbose output
+        "extractor": "youtube",  # Use the YoutubeIE extractor
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
-        url2 = info['formats'][0]['url']
+        url2 = info["formats"][0]["url"]
         voice_client.play(discord.FFmpegPCMAudio(url2))
+
 
 @bot.command()
 async def stop(ctx):
@@ -95,30 +108,36 @@ async def stop(ctx):
     else:
         await ctx.send("I'm not in a voice channel.")
 
+
 @bot.command()
 async def giveaway(ctx, duration: int, prize: str, winners: int):
-    await ctx.send(f"🎉 **Giveaway started!** 🎉\n\nPrize: {prize}\nDuration: {duration} hour(s)\nWinners: {winners}")
-    
+    await ctx.send(
+        f"🎉 **Giveaway started!** 🎉\n\nPrize: {prize}\nDuration: {duration} hour(s)\nWinners: {winners}"
+    )
+
     # Sleep for the duration of the giveaway
     await asyncio.sleep(duration * 3600)
-    
+
     # Get all members of the server
     members = ctx.guild.members
-    
+
     # Filter out bots
     eligible_members = [member for member in members if not member.bot]
-    
+
     # Randomly select winners
-    giveaway_winners = random.sample(eligible_members, min(len(eligible_members), winners))
-    
+    giveaway_winners = random.sample(
+        eligible_members, min(len(eligible_members), winners)
+    )
+
     # Announce winners
     winner_mentions = " ".join([winner.mention for winner in giveaway_winners])
-    await ctx.send(f"🎉 **Giveaway ended!** 🎉\n\nPrize: {prize}\nWinners: {winner_mentions}\n\nCongratulations to the winners!")
+    await ctx.send(
+        f"🎉 **Giveaway ended!** 🎉\n\nPrize: {prize}\nWinners: {winner_mentions}\n\nCongratulations to the winners!"
+    )
 
-import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("token", help='specify bot token to use')
+parser.add_argument("token", help="specify bot token to use")
 cmdline = parser.parse_args()
 
 bot.run(cmdline.token)
