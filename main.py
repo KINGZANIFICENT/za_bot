@@ -1,3 +1,4 @@
+import logging
 import discord
 from discord.ext import commands
 import youtube_dl
@@ -7,12 +8,15 @@ import datetime
 from discord import Intents
 import argparse
 
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s (%(name)s) [%(levelname)s] %(message)s")
+logger = logging.getLogger("za_bot")
+
 bot = commands.Bot(command_prefix="!", intents=Intents.all())
 
 
 @bot.event
 async def on_ready():
-    print("Yurrrrrrrrrr!")
+    logger.info("Yurrrrrrrrrr!")
 
 
 @bot.event
@@ -25,7 +29,7 @@ async def on_member_join(member):
     if role:
         await member.add_roles(role)
     else:
-        print("Role not found!")
+        logger.error("Role not found!")
 
     member_count = guild.member_count
     channel_to_update = bot.get_channel(1238350633015447555)
@@ -52,10 +56,10 @@ async def on_message(message):
             until = datetime.datetime.now(tz=datetime.UTC) + datetime.timedelta(
                 minutes=10
             )
-            print(f"Timing Out User {message.author.mention}")
+            logger.info(f"Timing Out User {message.author.mention}")
             await message.author.timeout(until, reason="User spamming")
         except Exception as e:
-            print(f"Failed to timeout {message.author}: {e}")
+            logger.error(f"Failed to timeout {message.author}: {e}")
         spam_counter[user_id] = 0
 
     await bot.process_commands(message)
@@ -66,6 +70,11 @@ async def members(ctx):
     guild = ctx.guild
     member_count = guild.member_count
     await ctx.send(f"There are {member_count} members in this server.")
+
+@bot.command()
+async def heartbeat(ctx):
+    logger.info("Za Bot Im Alive NIGGUH")
+    await ctx.send("check the console")
 
 
 @bot.command()
